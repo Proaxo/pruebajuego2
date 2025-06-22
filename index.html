@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juego Triceratops</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f0f0; font-family: sans-serif; }
+    #game { width: 100vw; height: 200px; overflow: hidden; position: relative; background: #aee; }
+    #triceratops {
+      width: 60px; height: 60px;
+      background: green;
+      border-radius: 10px;
+      position: absolute;
+      bottom: 0; left: 50px;
+      transition: bottom 0.2s;
+    }
+    #obstacle {
+      width: 40px; height: 40px;
+      background: brown;
+      position: absolute;
+      bottom: 0; right: -40px;
+    }
+    #score {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="score">Puntos: 0</div>
+    <div id="triceratops"></div>
+    <div id="obstacle"></div>
+  </div>
+
+  <script>
+    const triceratops = document.getElementById('triceratops');
+    const obstacle = document.getElementById('obstacle');
+    const scoreDisplay = document.getElementById('score');
+    let jumping = false;
+    let score = 0;
+    let speed = 20;
+
+    function jump() {
+      if (jumping) return;
+      jumping = true;
+      triceratops.style.bottom = '100px';
+      setTimeout(() => {
+        triceratops.style.bottom = '0';
+        jumping = false;
+      }, 500);
+    }
+
+    function moveObstacle() {
+      let pos = window.innerWidth;
+      obstacle.style.right = '-40px';
+      const interval = setInterval(() => {
+        pos -= 5;
+        obstacle.style.right = `${window.innerWidth - pos}px`;
+
+        let tLeft = triceratops.offsetLeft;
+        let tRight = tLeft + triceratops.offsetWidth;
+        let oLeft = obstacle.offsetLeft;
+        let oRight = oLeft + obstacle.offsetWidth;
+
+        let tBottom = parseInt(window.getComputedStyle(triceratops).bottom);
+        if (
+          oLeft < tRight &&
+          oRight > tLeft &&
+          tBottom < 40
+        ) {
+          clearInterval(interval);
+          alert('¡Has perdido! Puntuación: ' + score);
+          location.reload();
+        }
+
+        if (pos < 0) {
+          clearInterval(interval);
+          score++;
+          scoreDisplay.textContent = 'Puntos: ' + score;
+          
+          // Aumentar velocidad: reducir intervalo mínimo a 8 
+          if (speed > 8) speed -= 1;
+          
+          setTimeout(moveObstacle, 500);
+        }
+      }, speed);
+    }
+
+    document.addEventListener('click', jump);
+    document.addEventListener('touchstart', jump);
+
+    moveObstacle();
+  </script>
+</body>
+</html>
+```
