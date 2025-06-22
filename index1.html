@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nave Esquiva</title>
+  <style>
+    body { margin: 0; background: black; overflow: hidden; }
+    canvas { display: block; margin: 0 auto; background: #111; }
+  </style>
+</head>
+<body>
+<canvas id="juego" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("juego");
+const ctx = canvas.getContext("2d");
+
+let nave = { x: 175, y: 520, w: 50, h: 50 };
+let obstaculos = [];
+let items = [];
+let score = 0;
+let monedas = 0;
+let gameOver = false;
+
+function dibujarNave() {
+  ctx.fillStyle = "cyan";
+  ctx.fillRect(nave.x, nave.y, nave.w, nave.h);
+}
+
+function dibujarObstaculos() {
+  ctx.fillStyle = "red";
+  obstaculos.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+}
+
+function moverObstaculos() {
+  obstaculos.forEach(o => o.y += 5);
+  obstaculos = obstaculos.filter(o => o.y < canvas.height);
+}
+
+function detectarColision() {
+  for (let o of obstaculos) {
+    if (
+      nave.x < o.x + o.w &&
+      nave.x + nave.w > o.x &&
+      nave.y < o.y + o.h &&
+      nave.y + nave.h > o.y
+    ) {
+      gameOver = true;
+    }
+  }
+}
+
+function generarObstaculo() {
+const x = Math.floor(Math.random() * 350);
+  obstaculos.push({ x, y: -40, w: 50, h: 40 });
+}
+
+function generarMoneda() {
+  const x = Math.floor(Math.random() * (canvas.width - 30));
+  items.push({ x: x, y: -30, w: 30, h: 30 });
+}
+
+function moverMonedas() {
+  items.forEach(i => i.y += 3);
+  items = items.filter(i => i.y < canvas.height);
+}
+
+function dibujarMonedas() {
+  ctx.fillStyle = "gold";
+  items.forEach(i => {
+    ctx.beginPath();
+    ctx.arc(i.x + 15, i.y + 15, 15, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function detectarMoneda() {
+  items = items.filter(i => {
+    const colision =
+      nave.x < i.x + i.w &&
+      nave.x + nave.w > i.x &&
+      nave.y < i.y + i.h &&
+      nave.y + nave.h > i.y;
+
+    if (colision) monedas++;
+    return !colision;
+  });
+}
+
+function dibujarScore() {
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText("Puntos: " + score, 10, 30);
+  ctx.fillText("Monedas: " + monedas, 10, 55);
+}
+
+function loop() {
+  if (gameOver) {
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("¡Game Over!", 120, 300);
+    ctx.fillText("Puntos: " + score, 130, 340);
+    ctx.fillText("Monedas: " + monedas, 120, 380);
+    return;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  dibujarNave();
+  dibujarObstaculos();
+  moverObstaculos();
+  moverMonedas();
+  dibujarMonedas();
+  detectarColision();
+  detectarMoneda();
+  dibujarScore();
+  requestAnimationFrame(loop);
+}
+
+document.addEventListener("keydown", e => {
+  if (e.code === "ArrowLeft" && nave.x > 0) nave.x -= 20;
+  if (e.code === "ArrowRight" && nave.x < canvas.width - nave.w) nave.x += 20;
+});
+
+canvas.addEventListener("touchmove", e => {
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  nave.x = x - nave.w / 2;
+
+  if (nave.x < 0) nave.x = 0;
+  if (nave.x > canvas.width - nave.w) nave.x = canvas.width - nave.w;
+});
+
+setInterval(() => {
+  if (!gameOver) {
+    generarObstaculo();
+    if (Math.random() < 0.5) generarMoneda();
+    score++;
+  }
+}, 800);
+
+loop();
+</script>
+</body>
+</html>
