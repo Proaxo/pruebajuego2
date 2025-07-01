@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Panel Móvil</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(#0f2027, #203a43, #2c5364);
+      font-family: sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h2, h3 {
+      margin: 6px 0;
+      font-weight: normal;
+    }
+
+    .seccion-superior {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .icon {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      padding: 10px;
+      transition: 0.3s ease;
+    }
+
+    .icon:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .icon img {
+      width: 35px;
+      height: 35px;
+      margin-bottom: 5px;
+    }
+
+    #search {
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    #search form {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    #search input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      width: 65%;
+      font-size: 1rem;
+    }
+
+    #search button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #00b894;
+      color: white;
+      font-size: 1rem;
+    }
+    
+    #tasks {
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    #timer {
+      margin-top: 20px;
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fecha, hora y clima -->
+  <div class="seccion-superior">
+    <h2 id="fecha">—</h2>
+    <h3 id="hora">—</h3>
+    <h3 id="clima">Cargando clima por ubicación...</h3>
+  </div>
+
+  <!-- Buscador de Google (arriba del grid) -->
+  <div id="search">
+    <form action="https://www.google.com/search" method="get" target="_blank">
+      <input type="text" name="q" placeholder="Buscar en Google..." />
+      <button type="submit">🔍</button>
+    </form>
+  </div>
+  
+  <!-- Lista de Tareas -->
+<div id="todo" style="margin-bottom: 30px; width: 100%; max-width: 500px;">
+  <h3> Mis Tareas</h3>
+  <form id="todo-form" style="display: flex; gap: 8px;">
+    <input type="text" id="todo-input" placeholder="Escribe una tarea..." style="flex: 1; padding: 10px; border-radius: 8px; border: none;" />
+    <button type="submit" style="padding: 10px 14px; border-radius: 8px; border: none; background: #0984e3; color: white;">Añadir</button>
+  </form>
+  <ul id="todo-list" style="list-style: none; padding: 0; margin-top: 15px;"></ul>
+</div>
+
+<div id="timer" style="width: 100%; max-width: 500px; margin-top: 30px; color: white; text-align: center;">
+  <h3> Cronómetro / Temporizador</h3>
+  <div style="font-size: 2rem; margin-bottom: 10px;" id="display">00:00:00</div>
+  
+  <div style="display: flex; justify-content: center; gap: 10px;">
+    <button onclick="startTimer()" style="padding: 8px 16px; border-radius: 6px; border: none; background: #00b894; color: white;">Iniciar</button>
+    <button onclick="pauseTimer()" style="padding: 8px 16px; border-radius: 6px; border: none; background: #fdcb6e; color: black;">Pausar</button>
+    <button onclick="resetTimer()" style="padding: 8px 16px; border-radius: 6px; border: none; background: #d63031; color: white;">Reiniciar</button>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <input type="number" id="timer-minutes" placeholder="Minutos para temporizador" style="width: 200px; padding: 8px; border-radius: 6px; border: none;"/>
+    <button onclick="setCountdown()" style="padding: 8px 16px; border-radius: 6px; border: none; background: #0984e3; color: white; margin-left: 10px;">Temporizador</button>
+  </div>
+</div>
+
+
+  <!-- Apps -->
+  <div class="grid">
+    <a href="https://web.whatsapp.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" />
+      WhatsApp
+    </a>
+    <a href="https://www.instagram.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" />
+      Instagram
+    </a>
+    <a href="https://youtube.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png" />
+      YouTube
+    </a>
+    <a href="https://www.netflix.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/netflix.png" />
+      Netflix
+    </a>
+    <a href="https://open.spotify.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/spotify.png" />
+      Spotify
+    </a>
+    <a href="https://www.tiktok.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok.png" />
+      TikTok
+    </a>
+    <a href="https://mail.google.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/gmail.png" />
+      Gmail
+    </a>
+    <a href="https://chat.openai.com" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/artificial-intelligence.png" />
+      ChatGPT
+    </a>
+    <a href="#" onclick="openCamera()" class="icon">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/camera.png" />
+      Cámara
+    </a>
+    <a href="https://www.google.com/maps" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/google-maps.png"/>
+      Maps
+    </a>   
+    <a href="https://poki.com/es/online" class="icon" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/controller.png" />
+      Poki
+</a>
+
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function actualizarFechaHora() {
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString('es-ES', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const hora = ahora.toLocaleTimeString('es-ES');
+      document.getElementById('fecha').textContent = fecha;
+      document.getElementById('hora').textContent = hora;
+    }
+
+    actualizarFechaHora();
+    setInterval(actualizarFechaHora, 1000);
+
+    function mostrarClima(lat, lon) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=celsius&windspeed_unit=kmh`;
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const temp = data.current_weather.temperature;
+          const viento = data.current_weather.windspeed;
+          document.getElementById('clima').textContent = `🌡️ ${temp}°C · 💨 Viento: ${viento} km/h`;
+        })
+        .catch(() => {
+          document.getElementById('clima').textContent = 'No se pudo obtener el clima.';
+        });
+    }
+
+    function obtenerUbicacion() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            mostrarClima(pos.coords.latitude, pos.coords.longitude);
+          },
+          () => {
+            document.getElementById('clima').textContent = 'Ubicación denegada.';
+          }
+        );
+      } else {
+        document.getElementById('clima').textContent = 'Geolocalización no soportada.';
+      }
+    }
+
+    obtenerUbicacion();
+
+    function openCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(() => {
+          alert('¡Cámara activada! (Visualización depende del navegador)');
+        })
+        .catch(() => {
+          alert('Permiso de cámara denegado o no disponible.');
+        });
+    }
+  </script>
+  <script>
+  const todoForm = document.getElementById('todo-form');
+  const todoInput = document.getElementById('todo-input');
+  const todoList = document.getElementById('todo-list');
+
+  let tareas = JSON.parse(localStorage.getItem('tareas')) || [];
+
+  function guardarTareas() {
+    localStorage.setItem('tareas', JSON.stringify(tareas));
+  }
+
+  function renderTareas() {
+    todoList.innerHTML = '';
+    tareas.forEach((tarea, index) => {
+      const li = document.createElement('li');
+      li.style.display = 'flex';
+      li.style.justifyContent = 'space-between';
+      li.style.alignItems = 'center';
+      li.style.marginBottom = '8px';
+
+      const span = document.createElement('span');
+      span.textContent = tarea.texto;
+      if (tarea.completado) {
+        span.style.textDecoration = 'line-through';
+        span.style.opacity = 0.6;
+      }
+
+      span.onclick = () => {
+        tarea.completado = !tarea.completado;
+        guardarTareas();
+        renderTareas();
+      };
+
+      const btn = document.createElement('button');
+      btn.textContent = '✖';
+      btn.style.marginLeft = '10px';
+      btn.style.background = 'transparent';
+      btn.style.border = 'none';
+      btn.style.color = '#e74c3c';
+      btn.style.fontSize = '1.2rem';
+      btn.onclick = () => {
+        tareas.splice(index, 1);
+        guardarTareas();
+        renderTareas();
+      };
+
+      li.appendChild(span);
+      li.appendChild(btn);
+      todoList.appendChild(li);
+    });
+  }
+
+  todoForm.onsubmit = (e) => {
+    e.preventDefault();
+    const texto = todoInput.value.trim();
+    if (texto) {
+      tareas.push({ texto, completado: false });
+      guardarTareas();
+      renderTareas();
+      todoInput.value = '';
+    }
+  };
+
+  renderTareas();
+</script>
+
+<script>
+  let timerInterval;
+  let totalSeconds = 0;
+  let isCountingDown = false;
+
+  function updateDisplay() {
+    let hours = Math.floor(totalSeconds / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = totalSeconds % 60;
+
+    document.getElementById('display').textContent =
+      `${String(hours).padStart(2, '0')}:` +
+      `${String(minutes).padStart(2, '0')}:` +
+      `${String(seconds).padStart(2, '0')}`;
+  }
+
+  function startTimer() {
+    if (timerInterval) return; // evitar múltiples intervalos
+    timerInterval = setInterval(() => {
+      if (isCountingDown) {
+        if (totalSeconds > 0) {
+          totalSeconds--;
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          alert('⏰ ¡Temporizador finalizado!');
+        }
+      } else {
+        totalSeconds++;
+      }
+      updateDisplay();
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  function resetTimer() {
+    pauseTimer();
+    totalSeconds = 0;
+    isCountingDown = false;
+    updateDisplay();
+  }
+
+  function setCountdown() {
+    const minutes = parseInt(document.getElementById('timer-minutes').value);
+    if (isNaN(minutes) || minutes <= 0) {
+      alert('Por favor ingresa un número válido de minutos');
+      return;
+    }
+    totalSeconds = minutes * 60;
+    isCountingDown = true;
+    updateDisplay();
+    if (!timerInterval) {
+      startTimer();
+    }
+  }
+
+  updateDisplay();
+</script>
+</body>
+</html>
